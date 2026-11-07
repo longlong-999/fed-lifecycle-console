@@ -2,45 +2,64 @@
 
 ## 技术栈
 
-- **核心**: Vite 7, TypeScript, Express
-- **UI**: Tailwind CSS
+- **核心**: React 18, Vite 7, TypeScript (strict)
+- **UI**: Tailwind CSS 4
+- **路由**: React Router v7
+- **测试**: Vitest 5 + React Testing Library
+- **监控**: web-vitals
+- **部署**: Docker multi-stage + nginx
 
 ## 目录结构
 
 ```
+├── .github/workflows/  # CI/CD
+│   └── ci.yml          # GitHub Actions: lint → test → build → deploy
 ├── scripts/            # 构建与启动脚本
-│   ├── build.sh        # 构建脚本
-│   ├── dev.sh          # 开发环境启动脚本
-│   ├── prepare.sh      # 预处理脚本
-│   └── start.sh        # 生产环境启动脚本
-├── server/             # 服务端逻辑
-│   ├── routes/         # API 路由
-│   ├── server.ts       # Express 服务入口
-│   └── vite.ts         # Vite 中间件集成
-├── src/                # 前端源码
-│   ├── index.css       # 全局样式
-│   ├── index.ts        # 客户端入口
-│   └── main.ts         # 主逻辑
-├── index.html          # 入口 HTML
-├── package.json        # 项目依赖管理
-├── tsconfig.json       # TypeScript 配置
-└── vite.config.ts      # Vite 配置
+├── server/             # Express 服务端
+├── src/
+│   ├── __tests__/      # 组件测试 (StageNav, MetricCard, CodeBlock)
+│   ├── components/     # 可复用组件
+│   │   ├── BundleChart.tsx    # 构建产物可视化
+│   │   ├── CodeBlock.tsx      # 语法高亮代码块
+│   │   ├── ErrorBoundary.tsx  # React 错误边界
+│   │   ├── Layout.tsx         # 应用外壳
+│   │   ├── MetricCard.tsx     # Web Vitals 指标卡
+│   │   ├── PipelineViz.tsx    # CI/CD 流水线动画
+│   │   ├── StageNav.tsx       # 左侧阶段导航
+│   │   └── TestRunner.tsx     # 模拟测试运行器
+│   ├── pages/          # 路由页面 (9 个阶段)
+│   ├── lib/            # 工具库
+│   │   ├── monitor.ts  # Web Vitals 上报封装
+│   │   └── stages.ts   # 阶段定义
+│   ├── test/setup.ts   # Vitest 配置
+│   ├── App.tsx         # 根组件 + 路由
+│   ├── main.tsx        # 入口
+│   └── index.css       # 全局样式
+├── Dockerfile          # 多阶段构建
+├── nginx.conf          # 生产 nginx 配置
+├── vitest.config.ts    # Vitest 配置
+├── vite.config.ts      # Vite 配置
+└── tsconfig.json       # TypeScript strict 配置
 ```
 
 ## 包管理规范
 
 **仅允许使用 pnpm** 作为包管理器，**严禁使用 npm 或 yarn**。
-**常用命令**：
-- 安装依赖：`pnpm add <package>`
-- 安装开发依赖：`pnpm add -D <package>`
-- 安装所有依赖：`pnpm install`
-- 移除依赖：`pnpm remove <package>`
 
-## 开发规范
+## 开发命令
 
-- 使用 Tailwind CSS 进行样式开发
+| 命令 | 说明 |
+|------|------|
+| `pnpm dev` | 启动开发服务器 |
+| `pnpm build` | 生产构建 |
+| `pnpm test` | 运行测试 |
+| `pnpm test:coverage` | 测试覆盖率 |
+| `pnpm lint` | ESLint 检查 |
+| `pnpm ts-check` | TypeScript 类型检查 |
 
-### 编码规范
+## 编码规范
 
-- 默认按 TypeScript `strict` 心智写代码；优先复用当前作用域已声明的变量、函数、类型和导入，禁止引用未声明标识符或拼错变量名。
-- 禁止隐式 `any` 和 `as any`；函数参数、返回值、解构项、事件对象、Express `req`/`res`、`catch` 错误在使用前应有明确类型或先完成类型收窄，并清理未使用的变量和导入。
+- TypeScript `strict` 模式，禁止隐式 `any`
+- 函数参数必须标注类型
+- 使用 Tailwind CSS + CSS 变量进行样式开发
+- 组件使用 PascalCase，函数/变量使用 camelCase

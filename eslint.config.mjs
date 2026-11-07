@@ -20,6 +20,8 @@ export default defineConfig([
     },
     rules: {
       'import/no-cycle': ['error', { ignoreExternal: true }],
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
   globalIgnores([
@@ -27,5 +29,6 @@ export default defineConfig([
     'dist-server/**',
     'node_modules/**',
     'scripts/**',
+    'coverage/**',
   ]),
 ]);

@@ -11,7 +11,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "types": ["node"]
+    "jsx": "react-jsx",
+    "types": ["node", "vitest/globals", "@testing-library/jest-dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["src", "server"]
+  "include": ["src", "server", "vite.config.ts", "vitest.config.ts"],
+  "exclude": ["node_modules"]
 }

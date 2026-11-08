@@ -8,21 +8,30 @@ interface Props {
 interface State {
   hasError: boolean;
   error: Error | null;
+  retryKey: number;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, retryKey: 0 };
   }
 
   static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+    return { hasError: true, error, retryKey: 0 };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     console.error('[ErrorBoundary] Uncaught error:', error, errorInfo);
   }
+
+  handleRetry = (): void => {
+    this.setState((prev) => ({
+      hasError: false,
+      error: null,
+      retryKey: prev.retryKey + 1,
+    }));
+  };
 
   render(): ReactNode {
     if (this.state.hasError) {
@@ -43,7 +52,7 @@ export class ErrorBoundary extends Component<Props, State> {
               {this.state.error?.message}
             </pre>
             <button
-              onClick={() => this.setState({ hasError: false, error: null })}
+              onClick={this.handleRetry}
               className="mt-4 px-4 py-2 rounded text-sm font-medium transition-colors cursor-pointer"
               style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-default)' }}
             >
@@ -54,6 +63,10 @@ export class ErrorBoundary extends Component<Props, State> {
       );
     }
 
-    return this.props.children;
+    return (
+      <div key={this.state.retryKey}>
+        {this.props.children}
+      </div>
+    );
   }
 }

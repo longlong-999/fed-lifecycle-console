@@ -1,179 +1,154 @@
-import { useState } from 'react';
 import { CodeBlock } from '../components/CodeBlock';
+import { useCheckedSet } from '../lib/useLocalStorage';
 
-const requirements = [
-  { id: 1, text: 'User authentication & authorization flow', done: true },
-  { id: 2, text: 'Real-time data dashboard with WebSocket', done: true },
-  { id: 3, text: 'Responsive layout (mobile-first)', done: true },
-  { id: 4, text: 'Dark mode support', done: true },
-  { id: 5, text: 'i18n multi-language support', done: false },
-  { id: 6, text: 'Performance budget: LCP < 2.5s', done: true },
-  { id: 7, text: 'Accessibility WCAG 2.1 AA compliance', done: false },
-  { id: 8, text: 'SEO optimization (SSR/SSG)', done: true },
-];
-
-const techComparison = [
+const techComparisons = [
   {
     category: 'Build Tool',
     options: [
-      { name: 'Vite', verdict: 'Chosen', reasons: ['ESM-based, instant dev server start', 'HMR < 50ms regardless of app size', 'Rollup-based build with native ES modules'] },
-      { name: 'Webpack', verdict: 'Rejected', reasons: ['Slower cold start on large projects', 'Complex configuration required', 'HMR degrades with project size'] },
+      { name: 'Vite', verdict: 'chosen', reason: 'ESM-native, 10x faster HMR, native TS support' },
+      { name: 'Webpack', verdict: 'rejected', reason: 'Mature but slower DX, complex config' },
     ],
   },
   {
     category: 'Test Framework',
     options: [
-      { name: 'Vitest', verdict: 'Chosen', reasons: ['Native Vite integration, shared config', 'Built-in coverage via Istanbul/V8', 'Compatible with Jest API, easy migration'] },
-      { name: 'Jest', verdict: 'Rejected', reasons: ['Requires separate transform config for Vite', 'Slower startup with Babel transform', 'No native ESM support without flags'] },
+      { name: 'Vitest', verdict: 'chosen', reason: 'Native Vite integration, Jest-compatible API' },
+      { name: 'Jest', verdict: 'rejected', reason: 'Heavier, requires Babel transform for TS' },
+    ],
+  },
+  {
+    category: 'Styling',
+    options: [
+      { name: 'Tailwind CSS', verdict: 'chosen', reason: 'Utility-first, consistent design tokens, small bundle' },
+      { name: 'CSS Modules', verdict: 'alternative', reason: 'Good isolation but slower iteration' },
     ],
   },
   {
     category: 'State Management',
     options: [
-      { name: 'React Context + useReducer', verdict: 'Chosen', reasons: ['Zero dependencies, built into React', 'Sufficient for this app complexity', 'TypeScript inference works well'] },
-      { name: 'Redux Toolkit', verdict: 'Rejected', reasons: ['Overkill for current feature set', 'Additional boilerplate and dependencies', 'Steeper learning curve for new members'] },
+      { name: 'React useState/useReducer', verdict: 'chosen', reason: 'Sufficient for demo scope, no extra deps' },
+      { name: 'Redux / Zustand', verdict: 'overkill', reason: 'Unnecessary complexity for this app' },
     ],
   },
 ];
 
-export function Requirements() {
-  const [checklist, setChecklist] = useState(requirements);
+const requirementChecklist = [
+  { id: 'req-react18', text: 'React 18 with concurrent features' },
+  { id: 'req-vite7', text: 'Vite 7 with ESM build pipeline' },
+  { id: 'req-ts-strict', text: 'TypeScript strict mode enabled' },
+  { id: 'req-eslint', text: 'ESLint + Prettier code quality' },
+  { id: 'req-vitest', text: 'Vitest + React Testing Library' },
+  { id: 'req-router', text: 'React Router v7 multi-section routing' },
+  { id: 'req-webvitals', text: 'Web Vitals monitoring (FCP/LCP/CLS/INP/TTFB)' },
+  { id: 'req-errorboundary', text: 'ErrorBoundary for runtime error handling' },
+  { id: 'req-docker', text: 'Docker multi-stage build + nginx' },
+  { id: 'req-cicd', text: 'GitHub Actions CI/CD pipeline' },
+  { id: 'req-responsive', text: 'Responsive design (mobile/tablet/desktop)' },
+  { id: 'req-a11y', text: 'Accessibility (ARIA labels, keyboard nav)' },
+  { id: 'req-codesplit', text: 'Route-level code splitting' },
+  { id: 'req-darkmode', text: 'Dark IDE theme with CSS variables' },
+];
 
-  const toggleItem = (id: number) => {
-    setChecklist((prev) => prev.map((item) => (item.id === id ? { ...item, done: !item.done } : item)));
-  };
+export function Requirements() {
+  const [checkedSet, toggle] = useCheckedSet('requirements');
 
   return (
     <div className="space-y-8">
       <div>
         <h2 className="text-2xl font-bold mb-2">Requirements & Technical Design</h2>
         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-          Requirement decomposition, acceptance criteria, and technology selection rationale.
+          Breaking down project requirements and making informed technical decisions.
         </p>
       </div>
 
       {/* Requirements Checklist */}
       <div className="rounded-lg border p-6" style={{ borderColor: 'var(--border-default)', background: 'var(--bg-card)' }}>
         <div className="text-xs mb-4 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          REQUIREMENT CHECKLIST
+          REQUIREMENTS CHECKLIST ({checkedSet.size}/{requirementChecklist.length})
         </div>
-        <div className="space-y-2">
-          {checklist.map((item) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {requirementChecklist.map((item) => (
             <label
               key={item.id}
-              className="flex items-center gap-3 p-2 rounded cursor-pointer transition-colors hover:bg-white/5"
+              className="flex items-center gap-2 p-2 rounded cursor-pointer transition-colors"
+              style={{ background: checkedSet.has(item.id) ? 'rgba(63,185,80,0.1)' : 'transparent' }}
             >
               <input
                 type="checkbox"
-                checked={item.done}
-                onChange={() => toggleItem(item.id)}
-                className="w-4 h-4 rounded accent-green-500"
+                checked={checkedSet.has(item.id)}
+                onChange={() => toggle(item.id)}
+                className="rounded"
+                style={{ accentColor: 'var(--accent-green)' }}
               />
-              <span
-                className="text-sm"
-                style={{
-                  color: item.done ? 'var(--text-muted)' : 'var(--text-primary)',
-                  textDecoration: item.done ? 'line-through' : 'none',
-                }}
-              >
+              <span className="text-sm" style={{ color: checkedSet.has(item.id) ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
                 {item.text}
               </span>
-              {item.done && (
-                <span className="text-xs px-1.5 py-0.5 rounded" style={{ background: 'rgba(63,185,80,0.15)', color: 'var(--accent-green)' }}>
-                  Done
-                </span>
-              )}
             </label>
           ))}
         </div>
-        <div className="mt-4 pt-3 border-t flex items-center justify-between" style={{ borderColor: 'var(--border-default)' }}>
-          <span className="text-xs" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            {checklist.filter((c) => c.done).length}/{checklist.length} completed
-          </span>
-          <div className="w-32 h-1.5 rounded-full" style={{ background: 'var(--bg-tertiary)' }}>
-            <div
-              className="h-full rounded-full transition-all"
-              style={{
-                width: `${(checklist.filter((c) => c.done).length / checklist.length) * 100}%`,
-                background: 'var(--accent-green)',
-              }}
-            />
-          </div>
-        </div>
       </div>
 
-      {/* Tech Comparison Cards */}
+      {/* Tech Stack Decisions */}
       <div>
         <div className="text-xs mb-4 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          TECHNOLOGY SELECTION
+          TECHNOLOGY SELECTION MATRIX
         </div>
-        <div className="space-y-6">
-          {techComparison.map((comp) => (
-            <div key={comp.category} className="rounded-lg border overflow-hidden" style={{ borderColor: 'var(--border-default)' }}>
-              <div className="px-4 py-2 border-b" style={{ background: 'var(--bg-tertiary)', borderColor: 'var(--border-default)' }}>
-                <span className="text-xs font-bold" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
-                  {comp.category}
-                </span>
-              </div>
-              <div className="grid grid-cols-2">
-                {comp.options.map((opt) => (
-                  <div
-                    key={opt.name}
-                    className="p-4 border-r last:border-r-0"
-                    style={{ borderColor: 'var(--border-default)', background: opt.verdict === 'Chosen' ? 'rgba(63,185,80,0.03)' : 'transparent' }}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {techComparisons.map((comp) => (
+            <div key={comp.category} className="rounded-lg border p-4" style={{ borderColor: 'var(--border-default)', background: 'var(--bg-card)' }}>
+              <div className="text-sm font-bold mb-3" style={{ color: 'var(--accent-blue)' }}>{comp.category}</div>
+              {comp.options.map((opt) => (
+                <div key={opt.name} className="flex items-start gap-2 mb-2 last:mb-0">
+                  <span
+                    className="text-xs px-1.5 py-0.5 rounded font-mono"
+                    style={{
+                      background: opt.verdict === 'chosen' ? 'var(--accent-green)' : opt.verdict === 'rejected' ? 'var(--accent-red)' : 'var(--accent-orange)',
+                      color: 'var(--bg-primary)',
+                    }}
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{opt.name}</span>
-                      <span
-                        className="text-xs px-2 py-0.5 rounded-full font-medium"
-                        style={{
-                          background: opt.verdict === 'Chosen' ? 'rgba(63,185,80,0.15)' : 'rgba(248,81,73,0.15)',
-                          color: opt.verdict === 'Chosen' ? 'var(--accent-green)' : 'var(--accent-red)',
-                        }}
-                      >
-                        {opt.verdict}
-                      </span>
-                    </div>
-                    <ul className="space-y-1">
-                      {opt.reasons.map((reason, i) => (
-                        <li key={i} className="text-xs flex items-start gap-1.5" style={{ color: 'var(--text-secondary)' }}>
-                          <span style={{ color: opt.verdict === 'Chosen' ? 'var(--accent-green)' : 'var(--accent-red)' }}>
-                            {opt.verdict === 'Chosen' ? '+' : '-'}
-                          </span>
-                          {reason}
-                        </li>
-                      ))}
-                    </ul>
+                    {opt.verdict}
+                  </span>
+                  <div>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{opt.name}</span>
+                    <span className="text-xs ml-2" style={{ color: 'var(--text-muted)' }}>— {opt.reason}</span>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           ))}
         </div>
       </div>
 
-      {/* Tech Decision Record */}
-      <CodeBlock
-        filename="docs/adr/001-build-tool.md"
-        language="markdown"
-        code={`# ADR-001: Use Vite as Build Tool
+      {/* PRD Example */}
+      <div>
+        <div className="text-xs mb-3 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          SAMPLE PRD EXCERPT
+        </div>
+        <CodeBlock
+          language="markdown"
+          filename="PRD.md"
+          code={`# FED Lifecycle Console
 
-## Status: Accepted
+## Objective
+Build an interactive web application showcasing the complete frontend development lifecycle.
 
-## Context
-We need a fast, modern build tool for a React 18 SPA.
-The team values developer experience and fast feedback loops.
+## Target Audience
+Senior Frontend Engineers, Tech Leads, Engineering Managers
 
-## Decision
-Adopt Vite 7 with @vitejs/plugin-react.
+## Key Deliverables
+- 9-stage interactive walkthrough
+- Real working code examples from this repository
+- Live test runner simulation
+- CI/CD pipeline visualization
+- Web Vitals monitoring dashboard
 
-## Consequences
-- Dev server starts in < 500ms (vs ~10s with Webpack)
-- HMR updates in < 50ms regardless of app size
-- Production builds use Rollup with tree-shaking
-- Team needs to learn Vite-specific config (minimal)
-- Some Webpack plugins have no Vite equivalent`}
-      />
+## Success Criteria
+- All tests passing (unit + integration)
+- Lighthouse score > 95
+- Bundle size < 100KB gzipped
+- Full keyboard accessibility`}
+        />
+      </div>
     </div>
   );
 }

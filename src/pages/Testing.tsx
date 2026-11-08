@@ -97,11 +97,11 @@ export function Testing() {
         <div className="text-xs mb-4 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
           TESTING STRATEGY
         </div>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { type: 'Unit Tests', desc: 'Individual functions, hooks, utilities', coverage: '94%', color: 'var(--accent-green)' },
-            { type: 'Component Tests', desc: 'Render, interaction, accessibility', coverage: '88%', color: 'var(--accent-blue)' },
-            { type: 'Integration Tests', desc: 'Route navigation, data flow', coverage: '76%', color: 'var(--accent-purple)' },
+            { type: 'Unit Tests', desc: 'Individual functions, hooks, utilities', coverage: '94%', color: 'var(--accent-green)', note: 'Target' },
+            { type: 'Component Tests', desc: 'Render, interaction, accessibility', coverage: '88%', color: 'var(--accent-blue)', note: 'Target' },
+            { type: 'Integration Tests', desc: 'Route navigation, data flow', coverage: '76%', color: 'var(--accent-purple)', note: 'Target' },
           ].map((item) => (
             <div key={item.type} className="p-3 rounded border" style={{ borderColor: 'var(--border-default)', background: 'var(--bg-primary)' }}>
               <div className="text-sm font-bold mb-1" style={{ color: item.color }}>{item.type}</div>
@@ -116,8 +116,13 @@ export function Testing() {
 
       {/* Interactive Test Runner */}
       <div>
-        <div className="text-xs mb-3 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          INTERACTIVE TEST RUNNER
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            INTERACTIVE TEST RUNNER
+          </div>
+          <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(88,166,255,0.15)', color: 'var(--accent-blue)', fontFamily: 'var(--font-mono)' }}>
+            Demo Replay
+          </span>
         </div>
         <TestRunner />
       </div>

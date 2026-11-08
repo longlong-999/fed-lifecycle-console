@@ -129,6 +129,9 @@ export function Monitoring() {
             WEB VITALS — LIVE METRICS
           </div>
           <div className="flex items-center gap-3">
+            <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(210,153,34,0.15)', color: 'var(--accent-orange)', fontFamily: 'var(--font-mono)' }}>
+              Simulated Data
+            </span>
             <span className="text-xs" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
               Last update: {lastUpdate.toLocaleTimeString()}
             </span>
@@ -138,7 +141,7 @@ export function Monitoring() {
             </span>
           </div>
         </div>
-        <div className="grid grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {metrics.map((metric) => (
             <MetricCard
               key={metric.name}

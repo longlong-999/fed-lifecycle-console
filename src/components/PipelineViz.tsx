@@ -51,7 +51,7 @@ export function PipelineViz() {
   useEffect(() => {
     const timer = setTimeout(runPipeline, 500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [runPipeline]);
 
   const getStatusColor = (status: string): string => {
     switch (status) {
@@ -84,6 +84,9 @@ export function PipelineViz() {
           <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'var(--bg-primary)', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
             main
           </span>
+          <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(88,166,255,0.15)', color: 'var(--accent-blue)', fontFamily: 'var(--font-mono)' }}>
+            Demo
+          </span>
         </div>
         <button
           onClick={runPipeline}
@@ -109,13 +112,13 @@ export function PipelineViz() {
                   style={{
                     borderColor: getStatusColor(job.status),
                     color: getStatusColor(job.status),
-                    background: job.status === 'running' ? `${getStatusColor(job.status)}15` : 'var(--bg-primary)',
-                    animation: job.status === 'running' ? 'pulse-glow 1.5s ease-in-out infinite' : 'none',
+                    background: job.status === 'running' ? 'rgba(88,166,255,0.1)' : 'transparent',
+                    animation: job.status === 'running' ? 'pulse 1.5s infinite' : 'none',
                   }}
                 >
                   {getStatusIcon(job.status)}
                 </div>
-                <span className="text-xs mt-2 font-medium" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
+                <span className="text-xs mt-2 font-medium" style={{ color: 'var(--text-secondary)' }}>
                   {job.name}
                 </span>
                 {job.duration && (
@@ -125,7 +128,7 @@ export function PipelineViz() {
                 )}
               </div>
               {i < jobs.length - 1 && (
-                <div className="w-12 h-0.5 mx-2 mb-8" style={{
+                <div className="flex-1 mx-2 h-0.5 min-w-[20px]" style={{
                   background: job.status === 'success' ? 'var(--accent-green)' : 'var(--border-default)',
                 }} />
               )}

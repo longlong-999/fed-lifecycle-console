@@ -70,7 +70,7 @@ export function Build() {
         <div className="text-xs mb-4 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
           OPTIMIZATION TECHNIQUES
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
             { title: 'Tree-shaking', desc: 'ESM imports allow dead code elimination. Only used exports are included in the final bundle.', impact: '-40% bundle' },
             { title: 'Code Splitting', desc: 'Manual chunks for vendor libs + route-based lazy loading for page components.', impact: '-35% initial' },
@@ -92,8 +92,13 @@ export function Build() {
 
       {/* Bundle Visualization */}
       <div className="rounded-lg border p-6" style={{ borderColor: 'var(--border-default)', background: 'var(--bg-card)' }}>
-        <div className="text-xs mb-4 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          BUNDLE ANALYSIS
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            BUNDLE ANALYSIS
+          </div>
+          <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(210,153,34,0.15)', color: 'var(--accent-orange)', fontFamily: 'var(--font-mono)' }}>
+            Sample Data
+          </span>
         </div>
         <BundleChart before={beforeBundle} after={afterBundle} />
       </div>

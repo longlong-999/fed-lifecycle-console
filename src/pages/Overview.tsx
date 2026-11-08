@@ -58,7 +58,7 @@ export function Overview() {
       </div>
 
       {/* Stage Cards Grid */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {stages.map((stage) => (
           <button
             key={stage.id}
@@ -76,22 +76,29 @@ export function Overview() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="flex flex-wrap gap-3">
         {[
           { label: 'Stages', value: '9', color: 'var(--accent-green)' },
-          { label: 'Test Coverage', value: '94%', color: 'var(--accent-blue)' },
-          { label: 'Bundle Size', value: '48KB', color: 'var(--accent-purple)' },
-          { label: 'Lighthouse', value: '98', color: 'var(--accent-orange)' },
+          { label: 'Test Coverage', value: '94%', color: 'var(--accent-blue)', note: 'Target' },
+          { label: 'Bundle Size (gzip)', value: '48KB', color: 'var(--accent-purple)', note: 'Target' },
+          { label: 'Lighthouse', value: '98', color: 'var(--accent-orange)', note: 'Target' },
         ].map((metric) => (
           <div
             key={metric.label}
-            className="rounded-lg border p-4 text-center"
+            className="rounded-lg border p-4 text-center flex-1 min-w-[120px]"
             style={{ background: 'var(--bg-card)', borderColor: 'var(--border-default)' }}
           >
             <div className="text-2xl font-bold" style={{ color: metric.color, fontFamily: 'var(--font-mono)' }}>
               {metric.value}
             </div>
-            <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{metric.label}</div>
+            <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
+              {metric.label}
+              {'note' in metric && metric.note && (
+                <span className="ml-1.5 text-xs px-1 py-0.5 rounded" style={{ background: 'rgba(210,153,34,0.15)', color: 'var(--accent-orange)', fontFamily: 'var(--font-mono)' }}>
+                  {metric.note}
+                </span>
+              )}
+            </div>
           </div>
         ))}
       </div>

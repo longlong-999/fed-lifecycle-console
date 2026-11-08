@@ -1,90 +1,130 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useCallback } from 'react';
 import { stages } from '../lib/stages';
-import { useEffect } from 'react';
+import { useCheckedSet } from '../lib/useLocalStorage';
 
-export function StageNav() {
+interface StageNavProps {
+  onClose?: () => void;
+}
+
+export function StageNav({ onClose }: StageNavProps) {
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Read real completion data from localStorage
+  const [reqChecked] = useCheckedSet('requirements');
+  const [retroChecked] = useCheckedSet('retrospective');
+
   const currentPath = location.pathname;
 
-  const currentIndex = stages.findIndex((s) => s.path === currentPath);
+  // Keyboard navigation: Alt+Arrow keys
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+      e.preventDefault();
+      const currentIdx = stages.findIndex((s) => s.path === currentPath);
+      let nextIdx: number;
+      if (e.key === 'ArrowDown') {
+        nextIdx = currentIdx < stages.length - 1 ? currentIdx + 1 : 0;
+      } else {
+        nextIdx = currentIdx > 0 ? currentIdx - 1 : stages.length - 1;
+      }
+      navigate(stages[nextIdx].path);
+    }
+  }, [currentPath, navigate]);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.altKey && e.key === 'ArrowDown') {
-        e.preventDefault();
-        const next = Math.min(currentIndex + 1, stages.length - 1);
-        navigate(stages[next].path);
-      } else if (e.altKey && e.key === 'ArrowUp') {
-        e.preventDefault();
-        const prev = Math.max(currentIndex - 1, 0);
-        navigate(stages[prev].path);
-      }
-    };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex, navigate]);
+  }, [handleKeyDown]);
+
+  // Determine completion based on real localStorage data
+  const isStageComplete = (id: string): boolean => {
+    if (id === 'requirements') return reqChecked.size > 0;
+    if (id === 'retrospective') return retroChecked.size > 0;
+    return false;
+  };
 
   return (
-    <nav
-      className="fixed left-0 top-0 h-full w-64 flex flex-col border-r overflow-y-auto"
-      style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}
-      aria-label="Stage navigation"
-    >
-      <div className="p-5 border-b" style={{ borderColor: 'var(--border-default)' }}>
-        <h1 className="text-sm font-bold tracking-wider" style={{ color: 'var(--accent-green)', fontFamily: 'var(--font-mono)' }}>
-          FED LIFECYCLE
-        </h1>
-        <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
-          Senior Engineer Console
-        </p>
+    <aside className="h-screen flex flex-col border-r overflow-y-auto" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}>
+      {/* Header */}
+      <div className="p-4 border-b" style={{ borderColor: 'var(--border-default)' }}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-lg" style={{ color: 'var(--accent-green)' }}>⚡</span>
+            <h1 className="text-sm font-bold tracking-wide" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+              FED LIFECYCLE
+            </h1>
+          </div>
+          {/* Close button for mobile */}
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="p-1 rounded cursor-pointer lg:hidden"
+              style={{ color: 'var(--text-muted)' }}
+              aria-label="Close navigation"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </button>
+          )}
+        </div>
+        <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Senior FED Guide</p>
       </div>
 
-      <div className="flex-1 py-4">
+      {/* Stage List */}
+      <nav className="flex-1 p-3 space-y-1">
         {stages.map((stage, index) => {
           const isActive = currentPath === stage.path;
-          const isCompleted = index < currentIndex;
+          const isComplete = isStageComplete(stage.id);
 
           return (
             <button
               key={stage.id}
-              onClick={() => navigate(stage.path)}
-              className="w-full text-left px-5 py-3 flex items-center gap-3 transition-all duration-150 cursor-pointer border-l-2"
-              style={{
-                background: isActive ? 'var(--bg-tertiary)' : 'transparent',
-                borderColor: isActive ? 'var(--accent-green)' : 'transparent',
-                borderLeftColor: isActive ? 'var(--accent-green)' : 'transparent',
+              onClick={() => {
+                navigate(stage.path);
+                onClose?.();
               }}
               aria-current={isActive ? 'page' : undefined}
+              className="w-full text-left px-3 py-2.5 rounded-lg transition-all flex items-center gap-3 group cursor-pointer"
+              style={{
+                background: isActive ? 'var(--bg-tertiary)' : 'transparent',
+                borderLeft: isActive ? '2px solid var(--accent-green)' : '2px solid transparent',
+              }}
             >
               <span
-                className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-mono"
                 style={{
-                  background: isCompleted ? 'var(--accent-green)' : isActive ? 'var(--bg-primary)' : 'var(--bg-primary)',
-                  color: isCompleted ? 'var(--bg-primary)' : isActive ? 'var(--accent-green)' : 'var(--text-muted)',
-                  border: `1px solid ${isCompleted ? 'var(--accent-green)' : isActive ? 'var(--accent-green)' : 'var(--border-default)'}`,
-                  fontFamily: 'var(--font-mono)',
+                  background: isComplete ? 'var(--accent-green)' : isActive ? 'var(--accent-blue)' : 'var(--bg-primary)',
+                  color: isComplete || isActive ? 'var(--bg-primary)' : 'var(--text-muted)',
                 }}
               >
-                {isCompleted ? '✓' : stage.icon}
+                {isComplete ? '✓' : index + 1}
               </span>
-              <div className="min-w-0">
+              <div className="flex-1 min-w-0">
                 <div
-                  className="text-xs font-medium truncate"
+                  className="text-sm font-medium truncate"
                   style={{ color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)' }}
                 >
                   {stage.label}
+                </div>
+                <div className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>
+                  {stage.description}
                 </div>
               </div>
             </button>
           );
         })}
-      </div>
+      </nav>
 
-      <div className="p-4 border-t text-xs" style={{ borderColor: 'var(--border-default)', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-        <div>Alt+↑↓ Navigate</div>
-        <div className="mt-1">v1.0.0 · React 18 + Vite</div>
+      {/* Footer */}
+      <div className="p-4 border-t text-xs" style={{ borderColor: 'var(--border-default)', color: 'var(--text-muted)' }}>
+        <div className="flex items-center gap-1.5 mb-1">
+          <span style={{ color: 'var(--accent-green)' }}>●</span>
+          <span style={{ fontFamily: 'var(--font-mono)' }}>Alt+↑↓ Navigate</span>
+        </div>
+        <div style={{ fontFamily: 'var(--font-mono)' }}>v1.0.0 · React + Vite</div>
       </div>
-    </nav>
+    </aside>
   );
 }

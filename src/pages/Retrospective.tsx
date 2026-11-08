@@ -1,150 +1,195 @@
-import { useState } from 'react';
+import { CodeBlock } from '../components/CodeBlock';
+import { useCheckedSet } from '../lib/useLocalStorage';
 
-interface Practice {
-  id: string;
-  text: string;
-  category: string;
-  checked: boolean;
-}
-
-const initialPractices: Practice[] = [
-  { id: 'r1', text: 'Write ADR (Architecture Decision Records) for every major tech choice', category: 'Requirements', checked: false },
-  { id: 'r2', text: 'Define acceptance criteria before starting implementation', category: 'Requirements', checked: false },
-  { id: 'r3', text: 'Conduct spike investigations for unknown technical risks', category: 'Requirements', checked: false },
-  { id: 'e1', text: 'Enforce strict TypeScript — no `any` types in production code', category: 'Engineering', checked: false },
-  { id: 'e2', text: 'Use ESLint + Prettier with pre-commit hooks (husky + lint-staged)', category: 'Engineering', checked: false },
-  { id: 'e3', text: 'Maintain a living style guide / component library documentation', category: 'Engineering', checked: false },
-  { id: 'e4', text: 'Establish clear directory conventions (components/, pages/, lib/)', category: 'Engineering', checked: false },
-  { id: 't1', text: 'Aim for >80% statement coverage, but prioritize critical path tests', category: 'Testing', checked: false },
-  { id: 't2', text: 'Write tests alongside features, not as an afterthought', category: 'Testing', checked: false },
-  { id: 't3', text: 'Use React Testing Library over Enzyme for user-centric assertions', category: 'Testing', checked: false },
-  { id: 't4', text: 'Include accessibility tests (axe-core) in the test suite', category: 'Testing', checked: false },
-  { id: 'b1', text: 'Set and enforce bundle size budgets in CI', category: 'Build', checked: false },
-  { id: 'b2', text: 'Use rollup-plugin-visualizer to track bundle composition over time', category: 'Build', checked: false },
-  { id: 'b3', text: 'Implement route-based code splitting for all page components', category: 'Build', checked: false },
-  { id: 'c1', text: 'CI pipeline should complete in under 5 minutes', category: 'CI/CD', checked: false },
-  { id: 'c2', text: 'Require passing CI before merge — no exceptions', category: 'CI/CD', checked: false },
-  { id: 'c3', text: 'Use preview deployments for PR review (Vercel/Netlify pattern)', category: 'CI/CD', checked: false },
-  { id: 'd1', text: 'Multi-stage Docker builds to minimize production image size', category: 'Deploy', checked: false },
-  { id: 'd2', text: 'Content-hashed filenames with 1-year cache headers for static assets', category: 'Deploy', checked: false },
-  { id: 'd3', text: 'Implement health check endpoints for load balancer probes', category: 'Deploy', checked: false },
-  { id: 'm1', text: 'Monitor Core Web Vitals in production with real user metrics (RUM)', category: 'Monitor', checked: false },
-  { id: 'm2', text: 'Set up error tracking (Sentry) with source maps for stack traces', category: 'Monitor', checked: false },
-  { id: 'm3', text: 'Define SLOs for performance metrics and alert on breaches', category: 'Monitor', checked: false },
-  { id: 'p1', text: 'Conduct blameless postmortems for every production incident', category: 'Retro', checked: false },
-  { id: 'p2', text: 'Document lessons learned in a shared knowledge base', category: 'Retro', checked: false },
-  { id: 'p3', text: 'Regular tech debt sprints — allocate 20% of each quarter', category: 'Retro', checked: false },
+const practicesByStage = [
+  {
+    stage: 'Requirements & Design',
+    items: [
+      { id: 'retro-req-1', text: 'Write PRD with clear acceptance criteria before coding' },
+      { id: 'retro-req-2', text: 'Conduct tech design review with team before implementation' },
+      { id: 'retro-req-3', text: 'Document ADRs (Architecture Decision Records) for key choices' },
+    ],
+  },
+  {
+    stage: 'Engineering Standards',
+    items: [
+      { id: 'retro-eng-1', text: 'Enforce ESLint + Prettier in CI, not just locally' },
+      { id: 'retro-eng-2', text: 'Use path aliases for cleaner imports' },
+      { id: 'retro-eng-3', text: 'Keep component files under 200 lines' },
+    ],
+  },
+  {
+    stage: 'Testing',
+    items: [
+      { id: 'retro-test-1', text: 'Write tests alongside features, not after' },
+      { id: 'retro-test-2', text: 'Test behavior, not implementation details' },
+      { id: 'retro-test-3', text: 'Aim for meaningful coverage, not 100% number' },
+    ],
+  },
+  {
+    stage: 'Build & Optimization',
+    items: [
+      { id: 'retro-build-1', text: 'Measure before optimizing — use bundle analyzer' },
+      { id: 'retro-build-2', text: 'Code-split at route level minimum' },
+      { id: 'retro-build-3', text: 'Set performance budgets in CI' },
+    ],
+  },
+  {
+    stage: 'CI/CD',
+    items: [
+      { id: 'retro-ci-1', text: 'Keep CI pipeline under 5 minutes' },
+      { id: 'retro-ci-2', text: 'Use caching for node_modules and build artifacts' },
+      { id: 'retro-ci-3', text: 'Run tests in parallel when possible' },
+    ],
+  },
+  {
+    stage: 'Deployment',
+    items: [
+      { id: 'retro-deploy-1', text: 'Use multi-stage Docker builds for smaller images' },
+      { id: 'retro-deploy-2', text: 'Configure proper cache headers for static assets' },
+      { id: 'retro-deploy-3', text: 'Implement health check endpoints' },
+    ],
+  },
+  {
+    stage: 'Monitoring',
+    items: [
+      { id: 'retro-monitor-1', text: 'Set up Real User Monitoring (RUM), not just lab data' },
+      { id: 'retro-monitor-2', text: 'Define alerting thresholds based on user impact' },
+      { id: 'retro-monitor-3', text: 'Track error rates alongside performance metrics' },
+    ],
+  },
+  {
+    stage: 'Retrospective',
+    items: [
+      { id: 'retro-retro-1', text: 'Document learnings in team knowledge base' },
+      { id: 'retro-retro-2', text: 'Share wins and failures transparently' },
+      { id: 'retro-retro-3', text: 'Create action items with owners and deadlines' },
+    ],
+  },
 ];
 
+const totalItems = practicesByStage.reduce((sum, s) => sum + s.items.length, 0);
+
+const retrospectiveCode = `# Sprint Retrospective — Q4 2024
+
+## What Went Well
+- Reduced bundle size by 40% through code splitting
+- CI pipeline time cut from 8min to 3min with caching
+- Zero production incidents in last sprint
+
+## What Could Improve
+- Test coverage dropped to 78% — need to enforce in CI
+- Some PRs stayed open too long — review SLA needed
+- Documentation lagged behind feature development
+
+## Action Items
+- [ ] Add coverage gate to CI (threshold: 85%)
+- [ ] Implement PR review rotation
+- [ ] Schedule weekly doc-sync meetings`;
+
 export function Retrospective() {
-  const [practices, setPractices] = useState(initialPractices);
-
-  const togglePractice = (id: string) => {
-    setPractices((prev) => prev.map((p) => (p.id === id ? { ...p, checked: !p.checked } : p)));
-  };
-
-  const categories = [...new Set(practices.map((p) => p.category))];
-  const completedCount = practices.filter((p) => p.checked).length;
-  const totalCount = practices.length;
+  const [checkedSet, toggle] = useCheckedSet('retrospective');
 
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold mb-2">Retrospective & Best Practices</h2>
+        <h2 className="text-2xl font-bold mb-2">Retrospective & Knowledge Transfer</h2>
         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-          Senior FED best practices checklist — actionable items distilled from real project experience.
+          Documenting learnings, sharing knowledge, and continuous improvement practices.
         </p>
       </div>
 
-      {/* Progress */}
+      {/* Best Practices by Stage */}
       <div className="rounded-lg border p-6" style={{ borderColor: 'var(--border-default)', background: 'var(--bg-card)' }}>
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            ADOPTION PROGRESS
-          </span>
-          <span className="text-sm font-bold" style={{ color: 'var(--accent-green)', fontFamily: 'var(--font-mono)' }}>
-            {completedCount}/{totalCount}
-          </span>
+        <div className="text-xs mb-4 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          SENIOR FED BEST PRACTICES ({checkedSet.size}/{totalItems})
         </div>
-        <div className="h-2 rounded-full" style={{ background: 'var(--bg-tertiary)' }}>
-          <div
-            className="h-full rounded-full transition-all duration-300"
-            style={{
-              width: `${(completedCount / totalCount) * 100}%`,
-              background: 'var(--accent-green)',
-            }}
-          />
-        </div>
-        <div className="flex gap-4 mt-3">
-          {categories.map((cat) => {
-            const catPractices = practices.filter((p) => p.category === cat);
-            const catDone = catPractices.filter((p) => p.checked).length;
-            return (
-              <span key={cat} className="text-xs" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                {cat}: {catDone}/{catPractices.length}
-              </span>
-            );
-          })}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {practicesByStage.map((section) => (
+            <div key={section.stage}>
+              <div className="text-xs font-bold mb-2" style={{ color: 'var(--accent-purple)' }}>
+                {section.stage}
+              </div>
+              <div className="space-y-1">
+                {section.items.map((item) => (
+                  <label
+                    key={item.id}
+                    className="flex items-center gap-2 p-1.5 rounded cursor-pointer transition-colors"
+                    style={{ background: checkedSet.has(item.id) ? 'rgba(188,140,255,0.1)' : 'transparent' }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checkedSet.has(item.id)}
+                      onChange={() => toggle(item.id)}
+                      className="rounded"
+                      style={{ accentColor: 'var(--accent-purple)' }}
+                    />
+                    <span className="text-xs" style={{ color: checkedSet.has(item.id) ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                      {item.text}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Checklist by Category */}
-      {categories.map((category) => {
-        const catPractices = practices.filter((p) => p.category === category);
-        const catDone = catPractices.filter((p) => p.checked).length;
+      {/* Knowledge Transfer Template */}
+      <div>
+        <div className="text-xs mb-3 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          KNOWLEDGE TRANSFER TEMPLATE
+        </div>
+        <CodeBlock
+          language="markdown"
+          filename="HANDOFF.md"
+          code={`# Project Handoff Document
 
-        return (
-          <div key={category} className="rounded-lg border overflow-hidden" style={{ borderColor: 'var(--border-default)' }}>
-            <div
-              className="flex items-center justify-between px-4 py-2 border-b"
-              style={{ background: 'var(--bg-tertiary)', borderColor: 'var(--border-default)' }}
-            >
-              <span className="text-xs font-bold" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
-                {category.toUpperCase()}
-              </span>
-              <span className="text-xs" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                {catDone}/{catPractices.length}
-              </span>
-            </div>
-            <div className="p-2">
-              {catPractices.map((practice) => (
-                <label
-                  key={practice.id}
-                  className="flex items-center gap-3 p-2 rounded cursor-pointer transition-colors hover:bg-white/5"
-                >
-                  <input
-                    type="checkbox"
-                    checked={practice.checked}
-                    onChange={() => togglePractice(practice.id)}
-                    className="w-4 h-4 rounded accent-green-500"
-                  />
-                  <span
-                    className="text-sm"
-                    style={{
-                      color: practice.checked ? 'var(--text-muted)' : 'var(--text-primary)',
-                      textDecoration: practice.checked ? 'line-through' : 'none',
-                    }}
-                  >
-                    {practice.text}
-                  </span>
-                </label>
-              ))}
+## Architecture Overview
+- React 18 + Vite + TypeScript
+- Component library with Storybook
+- API layer with React Query
+
+## Key Decisions
+1. Chose Vite over CRA for faster DX
+2. Using Zustand for global state (minimal footprint)
+3. Deployed via Docker to Kubernetes
+
+## Common Pitfalls
+- Hot reload breaks with circular imports
+- Test mocks need to be reset between tests
+- Docker build cache invalidation on lockfile changes
+
+## Contact
+- Tech Lead: @senior-fed
+- On-call rotation: see PagerDuty schedule`}
+        />
+      </div>
+
+      {/* Retrospective Example */}
+      <div>
+        <div className="text-xs mb-3 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          SPRINT RETROSPECTIVE EXAMPLE
+        </div>
+        <CodeBlock language="markdown" filename="RETRO.md" code={retrospectiveCode} />
+      </div>
+
+      {/* Metrics Dashboard */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {[
+          { label: 'Sprint Velocity', value: '42 pts', trend: '+8%' },
+          { label: 'Bug Escape Rate', value: '2.1%', trend: '-15%' },
+          { label: 'Code Review Time', value: '4.2h', trend: '-22%' },
+          { label: 'Deploy Frequency', value: '3.2/d', trend: '+45%' },
+        ].map((metric) => (
+          <div key={metric.label} className="rounded-lg border p-4" style={{ background: 'var(--bg-card)', borderColor: 'var(--border-default)' }}>
+            <div className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>{metric.label}</div>
+            <div className="text-xl font-bold" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{metric.value}</div>
+            <div className="text-xs mt-1" style={{ color: metric.trend.startsWith('+') ? 'var(--accent-green)' : 'var(--accent-blue)' }}>
+              {metric.trend} vs last sprint
             </div>
           </div>
-        );
-      })}
-
-      {/* Key Takeaway */}
-      <div className="rounded-lg border p-6" style={{ borderColor: 'var(--accent-green)', background: 'rgba(63,185,80,0.05)' }}>
-        <div className="text-xs font-bold tracking-wider mb-3" style={{ color: 'var(--accent-green)', fontFamily: 'var(--font-mono)' }}>
-          KEY TAKEAWAY
-        </div>
-        <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-          The mark of a senior frontend engineer is not just writing code — it's building systems that make
-          writing good code the path of least resistance. Every configuration, every CI check, every monitoring
-          alert is an investment in team velocity and product reliability. The goal is to make the right thing
-          the easy thing.
-        </p>
+        ))}
       </div>
     </div>
   );

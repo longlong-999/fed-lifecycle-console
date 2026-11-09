@@ -1,19 +1,25 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { stages } from '../lib/stages';
-import { useCheckedSet } from '../lib/useLocalStorage';
+import { useCheckedCount } from '../lib/useLocalStorage';
 
 interface StageNavProps {
   onClose?: () => void;
 }
 
+// Total items per checklist stage (must match the page definitions)
+const CHECKLIST_TOTALS: Record<string, number> = {
+  requirements: 14,
+  retrospective: 24,
+};
+
 export function StageNav({ onClose }: StageNavProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Read real completion data from localStorage
-  const [reqChecked] = useCheckedSet('requirements');
-  const [retroChecked] = useCheckedSet('retrospective');
+  // Subscribe to shared store for real-time counts
+  const reqCount = useCheckedCount('requirements');
+  const retroCount = useCheckedCount('retrospective');
 
   const currentPath = location.pathname;
 
@@ -37,12 +43,20 @@ export function StageNav({ onClose }: StageNavProps) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
-  // Determine completion based on real localStorage data
-  const isStageComplete = (id: string): boolean => {
-    if (id === 'requirements') return reqChecked.size > 0;
-    if (id === 'retrospective') return retroChecked.size > 0;
-    return false;
-  };
+  // Determine completion: 100% of checklist must be checked
+  const isStageComplete = useMemo(() => {
+    return (id: string): boolean => {
+      if (id === 'requirements') {
+        const total = CHECKLIST_TOTALS[id] ?? 0;
+        return total > 0 && reqCount >= total;
+      }
+      if (id === 'retrospective') {
+        const total = CHECKLIST_TOTALS[id] ?? 0;
+        return total > 0 && retroCount >= total;
+      }
+      return false;
+    };
+  }, [reqCount, retroCount]);
 
   return (
     <aside className="h-screen flex flex-col border-r overflow-y-auto" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-default)' }}>

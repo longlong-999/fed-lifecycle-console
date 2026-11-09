@@ -17,12 +17,48 @@ export function Overview() {
       </div>
 
       {/* Pipeline Visualization */}
-      <div className="rounded-lg border p-8" style={{ borderColor: 'var(--border-default)', background: 'var(--bg-card)' }}>
+      <div className="rounded-lg border p-4 sm:p-8" style={{ borderColor: 'var(--border-default)', background: 'var(--bg-card)' }}>
         <div className="text-xs mb-6 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
           FED LIFECYCLE PIPELINE
         </div>
 
-        <div className="relative">
+        {/* Small screen: vertical list */}
+        <div className="flex flex-col gap-2 sm:hidden">
+          {stages.map((stage, index) => (
+            <button
+              key={stage.id}
+              onClick={() => navigate(stage.path)}
+              className="flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-white/5 cursor-pointer text-left"
+              style={{ background: 'var(--bg-secondary)' }}
+            >
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center text-base font-bold border-2 flex-shrink-0"
+                style={{
+                  background: 'var(--bg-primary)',
+                  borderColor: 'var(--accent-green)',
+                  color: 'var(--accent-green)',
+                  fontFamily: 'var(--font-mono)',
+                }}
+              >
+                {stage.icon}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                  {stage.label}
+                </div>
+                <div className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>
+                  {stage.description}
+                </div>
+              </div>
+              <span className="text-xs flex-shrink-0 font-mono" style={{ color: 'var(--text-muted)' }}>
+                {String(index + 1).padStart(2, '0')}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Medium+ screen: horizontal pipeline */}
+        <div className="relative hidden sm:block">
           {/* Connection line */}
           <div className="absolute top-6 left-6 right-6 h-0.5" style={{ background: 'var(--border-default)' }} />
 

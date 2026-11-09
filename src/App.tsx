@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import { Layout } from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { ChecklistProvider } from './lib/useLocalStorage';
 import { initMonitoring } from './lib/monitor';
 
 // Route-level code splitting
@@ -31,11 +32,12 @@ function LoadingFallback() {
 
 export function App() {
   return (
-    <ErrorBoundary>
-      <BrowserRouter>
-        <Layout>
-          <Suspense fallback={<LoadingFallback />}>
-            <Routes>
+    <ChecklistProvider>
+      <ErrorBoundary>
+        <BrowserRouter>
+          <Layout>
+            <Suspense fallback={<LoadingFallback />}>
+              <Routes>
               <Route path="/" element={<Navigate to="/overview" replace />} />
               <Route path="/overview" element={<Overview />} />
               <Route path="/requirements" element={<Requirements />} />
@@ -52,5 +54,6 @@ export function App() {
         </Layout>
       </BrowserRouter>
     </ErrorBoundary>
+    </ChecklistProvider>
   );
 }

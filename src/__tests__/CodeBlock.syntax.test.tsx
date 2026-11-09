@@ -47,3 +47,54 @@ describe('CodeBlock syntax highlighting', () => {
     expect(yamlText).toContain('this is a yaml comment');
   });
 });
+
+describe('CodeBlock markdown highlighting', () => {
+  it('renders markdown headings with correct text', () => {
+    const { container } = render(
+      <CodeBlock code={'# Title\n## Subtitle\n### Section'} language="markdown" />
+    );
+    const text = container.textContent ?? '';
+    expect(text).toContain('Title');
+    expect(text).toContain('Subtitle');
+    expect(text).toContain('Section');
+  });
+
+  it('renders markdown list items, bold, and links', () => {
+    const { container } = render(
+      <CodeBlock code={'- item one\n**bold text**\n[link](https://example.com)'} language="markdown" />
+    );
+    const text = container.textContent ?? '';
+    expect(text).toContain('item one');
+    expect(text).toContain('bold text');
+    expect(text).toContain('link');
+    expect(text).toContain('https://example.com');
+  });
+
+  it('renders inline code in markdown', () => {
+    const { container } = render(
+      <CodeBlock code={'Use `const x = 1` for constants'} language="markdown" />
+    );
+    const text = container.textContent ?? '';
+    expect(text).toContain('const x = 1');
+  });
+
+  it('handles large markdown documents without performance issues', () => {
+    // Generate a 1000+ line document
+    const lines: string[] = [];
+    for (let i = 0; i < 1100; i++) {
+      lines.push(`## Section ${i}\n- Item ${i} with **bold** and \`code\`\n> Quote ${i}\n`);
+    }
+    const code = lines.join('\n');
+
+    const start = performance.now();
+    const { container } = render(
+      <CodeBlock code={code} language="markdown" />
+    );
+    const elapsed = performance.now() - start;
+
+    // Should complete in reasonable time (< 500ms for 3300+ lines)
+    expect(elapsed).toBeLessThan(500);
+    expect(container.textContent).toContain('Section 0');
+    expect(container.textContent).toContain('Section 1099');
+  });
+});

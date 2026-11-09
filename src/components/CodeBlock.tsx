@@ -82,17 +82,27 @@ export function CodeBlock({ code, language = 'typescript', filename }: CodeBlock
   );
 }
 
-// ---- Syntax Highlighter ----
+// ---- Syntax Highlighter (O(n) single-pass tokenizer) ----
 
 interface Token {
   start: number;
   end: number;
-  type: 'string' | 'comment' | 'keyword' | 'type' | 'number';
+  type: 'string' | 'comment' | 'keyword' | 'type' | 'number' | 'md-heading' | 'md-bold' | 'md-italic' | 'md-code' | 'md-link' | 'md-list' | 'md-quote';
 }
 
-const KEYWORD_RE = /\b(import|export|from|const|let|var|function|return|if|else|switch|case|break|default|class|extends|interface|type|enum|async|await|new|try|catch|throw|typeof|instanceof|void|null|undefined|true|false|this|super|static|readonly|public|private|protected)\b/;
-const TYPE_RE = /\b(string|number|boolean|any|never|unknown|object|Array|Promise|Record|Partial|Required|Pick|Omit)\b/;
-const NUMBER_RE = /\b\d+\.?\d*\b/;
+const KEYWORDS = new Set([
+  'import', 'export', 'from', 'const', 'let', 'var', 'function', 'return',
+  'if', 'else', 'switch', 'case', 'break', 'default', 'class', 'extends',
+  'interface', 'type', 'enum', 'async', 'await', 'new', 'try', 'catch',
+  'throw', 'typeof', 'instanceof', 'void', 'null', 'undefined', 'true',
+  'false', 'this', 'super', 'static', 'readonly', 'public', 'private',
+  'protected', 'for', 'while', 'do', 'of', 'in', 'yield', 'delete',
+]);
+
+const TYPES = new Set([
+  'string', 'number', 'boolean', 'any', 'never', 'unknown', 'object',
+  'Array', 'Promise', 'Record', 'Partial', 'Required', 'Pick', 'Omit',
+]);
 
 function isJsLike(lang: string): boolean {
   return ['typescript', 'ts', 'javascript', 'js', 'tsx', 'jsx', 'json'].includes(lang);
@@ -102,7 +112,17 @@ function isShellLike(lang: string): boolean {
   return ['shell', 'bash', 'sh', 'yaml', 'yml', 'dockerfile', 'nginx', 'toml'].includes(lang);
 }
 
+function isMarkdown(lang: string): boolean {
+  return lang === 'markdown' || lang === 'md';
+}
+
+// ---- JS/TS/Shell/JSON tokenizer (O(n) single pass) ----
+
 function tokenizeLine(line: string, language: string): Token[] {
+  if (isMarkdown(language)) {
+    return tokenizeMarkdownLine(line);
+  }
+
   const tokens: Token[] = [];
   const jsLike = isJsLike(language);
   const shellLike = isShellLike(language);
@@ -157,88 +177,191 @@ function tokenizeLine(line: string, language: string): Token[] {
       break;
     }
 
-    // 5. Keywords, types, numbers (only outside strings/comments)
-    const rest = line.slice(i);
-
-    const kwMatch = rest.match(KEYWORD_RE);
-    const typeMatch = rest.match(TYPE_RE);
-    const numMatch = rest.match(NUMBER_RE);
-
-    // Find earliest match
-    let earliest: { index: number; length: number; type: Token['type'] } | null = null;
-
-    if (kwMatch && kwMatch.index !== undefined) {
-      earliest = { index: kwMatch.index, length: kwMatch[0].length, type: 'keyword' };
-    }
-    if (typeMatch && typeMatch.index !== undefined) {
-      if (!earliest || typeMatch.index < earliest.index) {
-        earliest = { index: typeMatch.index, length: typeMatch[0].length, type: 'type' };
+    // 5. Identifiers/keywords (O(1) set lookup)
+    if (/[a-zA-Z_$]/.test(line[i])) {
+      const start = i;
+      while (i < line.length && /[a-zA-Z0-9_$]/.test(line[i])) {
+        i++;
       }
-    }
-    if (numMatch && numMatch.index !== undefined) {
-      if (!earliest || numMatch.index < earliest.index) {
-        earliest = { index: numMatch.index, length: numMatch[0].length, type: 'number' };
+      const word = line.slice(start, i);
+      if (KEYWORDS.has(word)) {
+        tokens.push({ start, end: i, type: 'keyword' });
+      } else if (TYPES.has(word)) {
+        tokens.push({ start, end: i, type: 'type' });
       }
+      continue;
     }
 
-    if (earliest && earliest.index === 0) {
-      tokens.push({ start: i, end: i + earliest.length, type: earliest.type });
-      i += earliest.length;
-    } else {
-      i++;
+    // 6. Numbers
+    if (/[0-9]/.test(line[i])) {
+      const start = i;
+      while (i < line.length && /[0-9.]/.test(line[i])) {
+        i++;
+      }
+      tokens.push({ start, end: i, type: 'number' });
+      continue;
     }
+
+    // 7. Other characters — skip
+    i++;
   }
 
   return tokens;
 }
 
-function getColorForType(type: string): string {
-  switch (type) {
-    case 'keyword': return '#ff7b72';
-    case 'string': return '#a5d6ff';
-    case 'number': return '#79c0ff';
-    case 'type': return '#ffa657';
-    case 'comment': return '#6e7681';
-    default: return '#e6edf3';
+// ---- Markdown line tokenizer (O(n)) ----
+
+function tokenizeMarkdownLine(line: string): Token[] {
+  const tokens: Token[] = [];
+
+  // Heading: # / ## / ### etc at start of line
+  const headingMatch = line.match(/^(#{1,6})\s/);
+  if (headingMatch) {
+    tokens.push({ start: 0, end: headingMatch[1].length, type: 'md-heading' });
   }
+
+  // Blockquote: > at start
+  if (line.startsWith('> ')) {
+    tokens.push({ start: 0, end: 1, type: 'md-quote' });
+  }
+
+  // List item: - / * / 1. at start
+  if (/^(\s*[-*]|\s*\d+\.)\s/.test(line)) {
+    const listMatch = line.match(/^(\s*[-*]|\s*\d+\.)\s/);
+    if (listMatch) {
+      tokens.push({ start: 0, end: listMatch[1].length, type: 'md-list' });
+    }
+  }
+
+  // Inline tokens: **bold**, *italic*, `code`, [text](url)
+  let i = 0;
+  while (i < line.length) {
+    // Inline code: `...`
+    if (line[i] === '`') {
+      const start = i;
+      i++;
+      while (i < line.length && line[i] !== '`') {
+        i++;
+      }
+      if (i < line.length) {
+        i++; // consume closing `
+        tokens.push({ start, end: i, type: 'md-code' });
+      }
+      continue;
+    }
+
+    // Bold: **...**
+    if (line[i] === '*' && line[i + 1] === '*') {
+      const start = i;
+      i += 2;
+      while (i < line.length - 1) {
+        if (line[i] === '*' && line[i + 1] === '*') {
+          i += 2;
+          tokens.push({ start, end: i, type: 'md-bold' });
+          break;
+        }
+        i++;
+      }
+      continue;
+    }
+
+    // Italic: *...*
+    if (line[i] === '*' && line[i + 1] !== '*') {
+      const start = i;
+      i++;
+      while (i < line.length) {
+        if (line[i] === '*' && line[i - 1] !== '*') {
+          i++;
+          tokens.push({ start, end: i, type: 'md-italic' });
+          break;
+        }
+        i++;
+      }
+      continue;
+    }
+
+    // Link: [text](url)
+    if (line[i] === '[') {
+      const start = i;
+      let j = i + 1;
+      while (j < line.length && line[j] !== ']') {
+        j++;
+      }
+      if (j < line.length && line[j + 1] === '(') {
+        let k = j + 2;
+        while (k < line.length && line[k] !== ')') {
+          k++;
+        }
+        if (k < line.length) {
+          tokens.push({ start, end: k + 1, type: 'md-link' });
+          i = k + 1;
+          continue;
+        }
+      }
+    }
+
+    i++;
+  }
+
+  return tokens;
 }
+
+// ---- Render ----
+
+const TOKEN_COLORS: Record<string, string> = {
+  string: '#a5d6ff',
+  comment: '#8b949e',
+  keyword: '#ff7b72',
+  type: '#79c0ff',
+  number: '#79c0ff',
+  'md-heading': '#ff7b72',
+  'md-bold': '#ffa657',
+  'md-italic': '#a5d6ff',
+  'md-code': '#7ee787',
+  'md-link': '#79c0ff',
+  'md-list': '#d2a8ff',
+  'md-quote': '#8b949e',
+};
 
 function highlightSyntax(code: string, language: string): ReactNode[] {
   const lines = code.split('\n');
+
   return lines.map((line, lineIdx) => {
     const tokens = tokenizeLine(line, language);
-    const parts: ReactNode[] = [];
-    let cursor = 0;
-    let key = 0;
 
-    for (const token of tokens) {
-      if (token.start > cursor) {
-        parts.push(<span key={`p-${lineIdx}-${key++}`}>{line.slice(cursor, token.start)}</span>);
+    if (tokens.length === 0) {
+      return (
+        <span key={lineIdx}>
+          {line}
+          {lineIdx < lines.length - 1 ? '\n' : ''}
+        </span>
+      );
+    }
+
+    const parts: ReactNode[] = [];
+    let lastEnd = 0;
+
+    tokens.forEach((token, tokenIdx) => {
+      // Text before this token
+      if (token.start > lastEnd) {
+        parts.push(line.slice(lastEnd, token.start));
       }
+      // Token text
       parts.push(
-        <span
-          key={`p-${lineIdx}-${key++}`}
-          style={{
-            color: getColorForType(token.type),
-            fontStyle: token.type === 'comment' ? 'italic' : undefined,
-          }}
-        >
+        <span key={`${lineIdx}-${tokenIdx}`} style={{ color: TOKEN_COLORS[token.type] }}>
           {line.slice(token.start, token.end)}
         </span>
       );
-      cursor = token.end;
-    }
+      lastEnd = token.end;
+    });
 
-    if (cursor < line.length) {
-      parts.push(<span key={`p-${lineIdx}-${key++}`}>{line.slice(cursor)}</span>);
-    }
-
-    if (parts.length === 0) {
-      parts.push('');
+    // Remaining text after last token
+    if (lastEnd < line.length) {
+      parts.push(line.slice(lastEnd));
     }
 
     return (
-      <span key={`line-${lineIdx}`}>
+      <span key={lineIdx}>
         {parts}
         {lineIdx < lines.length - 1 ? '\n' : ''}
       </span>

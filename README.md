@@ -143,6 +143,32 @@ The Dockerfile uses multi-stage builds:
 - **Stage 1**: Node.js builder — installs deps and builds
 - **Stage 2**: nginx — serves static assets with optimized config
 
+## GitHub Pages 部署
+
+本项目支持自动部署到 GitHub Pages（免费静态托管）。
+
+### 配置步骤
+
+1. 进入仓库 **Settings → Pages**
+2. **Source** 选择 **GitHub Actions**
+3. 推送代码到 `main` 分支即自动触发部署
+
+### 部署流程
+
+```
+push to main → install → build (--base=/<repo>/) → SPA fallback (404.html) → upload artifact → deploy
+```
+
+- 构建命令自动追加 `--base=/<仓库名>/`，适配 Pages 子路径
+- 构建后执行 `cp dist/index.html dist/404.html`，确保 SPA 路由 404 兜底
+- 支持手动触发：Actions → Deploy to GitHub Pages → Run workflow
+
+### 站点地址
+
+```
+https://<owner>.github.io/<repo>/
+```
+
 ## Performance Monitoring
 
 Web Vitals are tracked using the `web-vitals` library:

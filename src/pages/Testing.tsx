@@ -23,7 +23,7 @@ describe('StageNav', () => {
         <StageNav />
       </MemoryRouter>
     );
-    const activeItem = screen.getByText('Testing');
+    const activeItem = screen.getByText('测试');
     expect(activeItem.closest('button')).toHaveAttribute(
       'aria-current', 'page'
     );
@@ -50,13 +50,13 @@ describe('MetricCard', () => {
 
   it('shows correct rating badge', () => {
     render(<MetricCard {...defaultProps} />);
-    expect(screen.getByText('Good')).toBeInTheDocument();
+    expect(screen.getByText('良好')).toBeInTheDocument();
   });
 
   it('renders threshold values', () => {
     render(<MetricCard {...defaultProps} />);
-    expect(screen.getByText(/Good: ≤2500ms/)).toBeInTheDocument();
-    expect(screen.getByText(/Poor: ≥4000ms/)).toBeInTheDocument();
+    expect(screen.getByText(/良好: ≤2500ms/)).toBeInTheDocument();
+    expect(screen.getByText(/较差: ≥4000ms/)).toBeInTheDocument();
   });
 });`;
 
@@ -77,7 +77,7 @@ describe('CodeBlock', () => {
       writeText: vi.fn().mockResolvedValue(undefined),
     });
     render(<CodeBlock code="hello" />);
-    await user.click(screen.getByText('Copy'));
+    await user.click(screen.getByText('复制'));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith('hello');
   });
 });`;
@@ -86,28 +86,28 @@ export function Testing() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold mb-2">Testing Stage</h2>
+        <h2 className="text-2xl font-bold mb-2">测试阶段</h2>
         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-          Vitest + React Testing Library for unit and integration tests. Real test code from this repository.
+          Vitest + React Testing Library 进行单元与集成测试。以下为仓库真实测试代码。
         </p>
       </div>
 
       {/* Test Strategy */}
       <div className="rounded-lg border p-6" style={{ borderColor: 'var(--border-default)', background: 'var(--bg-card)' }}>
         <div className="text-xs mb-4 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          TESTING STRATEGY
+          测试策略
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { type: 'Unit Tests', desc: 'Individual functions, hooks, utilities', coverage: '94%', color: 'var(--accent-green)', note: 'Target' },
-            { type: 'Component Tests', desc: 'Render, interaction, accessibility', coverage: '88%', color: 'var(--accent-blue)', note: 'Target' },
-            { type: 'Integration Tests', desc: 'Route navigation, data flow', coverage: '76%', color: 'var(--accent-purple)', note: 'Target' },
+            { type: '单元测试', desc: '独立函数、Hooks、工具', coverage: '94%', color: 'var(--accent-green)', note: '目标值' },
+            { type: '组件测试', desc: '渲染、交互、无障碍', coverage: '88%', color: 'var(--accent-blue)', note: '目标值' },
+            { type: '集成测试', desc: '路由导航、数据流', coverage: '76%', color: 'var(--accent-purple)', note: '目标值' },
           ].map((item) => (
             <div key={item.type} className="p-3 rounded border" style={{ borderColor: 'var(--border-default)', background: 'var(--bg-primary)' }}>
               <div className="text-sm font-bold mb-1" style={{ color: item.color }}>{item.type}</div>
               <div className="text-xs mb-2" style={{ color: 'var(--text-secondary)' }}>{item.desc}</div>
               <div className="text-xs" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                Coverage: {item.coverage}
+                覆盖率: {item.coverage}
               </div>
             </div>
           ))}
@@ -118,10 +118,10 @@ export function Testing() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            INTERACTIVE TEST RUNNER
+            交互式测试运行器
           </div>
           <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(88,166,255,0.15)', color: 'var(--accent-blue)', fontFamily: 'var(--font-mono)' }}>
-            Demo Replay
+            演示回放
           </span>
         </div>
         <TestRunner />
@@ -130,7 +130,7 @@ export function Testing() {
       {/* Real Test Code */}
       <div className="space-y-4">
         <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          REAL TEST CODE FROM THIS REPO
+          仓库真实测试代码
         </div>
         <CodeBlock code={stageNavTest} language="typescript" filename="src/__tests__/StageNav.test.tsx" />
         <CodeBlock code={metricCardTest} language="typescript" filename="src/__tests__/MetricCard.test.tsx" />

@@ -8,18 +8,17 @@ export function Overview() {
     <div className="space-y-8">
       <div>
         <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
-          Pipeline Overview
+          全流程总览
         </h2>
         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-          Complete frontend development lifecycle — from requirements to retrospective.
-          Each stage is a clickable node in the pipeline below.
+          前端研发全生命周期 — 从需求到复盘。每个阶段都是下方流水线中可点击的节点。
         </p>
       </div>
 
       {/* Pipeline Visualization */}
       <div className="rounded-lg border p-4 sm:p-8" style={{ borderColor: 'var(--border-default)', background: 'var(--bg-card)' }}>
         <div className="text-xs mb-6 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          FED LIFECYCLE PIPELINE
+          FED 研发流水线
         </div>
 
         {/* Small screen: vertical list */}
@@ -114,10 +113,10 @@ export function Overview() {
       {/* Key Metrics */}
       <div className="flex flex-wrap gap-3">
         {[
-          { label: 'Stages', value: '9', color: 'var(--accent-green)' },
-          { label: 'Test Coverage', value: '94%', color: 'var(--accent-blue)', note: 'Target' },
-          { label: 'Bundle Size (gzip)', value: '48KB', color: 'var(--accent-purple)', note: 'Target' },
-          { label: 'Lighthouse', value: '98', color: 'var(--accent-orange)', note: 'Target' },
+          { label: '阶段数', value: '9', color: 'var(--accent-green)' },
+          { label: '测试覆盖率', value: '94%', color: 'var(--accent-blue)', note: '目标值' },
+          { label: 'Bundle (gzip)', value: '48KB', color: 'var(--accent-purple)', note: '目标值' },
+          { label: 'Lighthouse', value: '98', color: 'var(--accent-orange)', note: '目标值' },
         ].map((metric) => (
           <div
             key={metric.label}

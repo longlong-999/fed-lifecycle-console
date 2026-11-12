@@ -36,14 +36,14 @@ export function Layout({ children }: LayoutProps) {
             onClick={() => setSidebarOpen(true)}
             className="p-1.5 rounded cursor-pointer"
             style={{ background: 'var(--bg-tertiary)' }}
-            aria-label="Open navigation"
+            aria-label="打开导航"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M3 5h14M3 10h14M3 15h14" stroke="var(--text-primary)" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
           </button>
           <span className="text-xs font-bold tracking-wider" style={{ color: 'var(--accent-green)', fontFamily: 'var(--font-mono)' }}>
-            FED LIFECYCLE
+            FED 全流程
           </span>
         </div>
 

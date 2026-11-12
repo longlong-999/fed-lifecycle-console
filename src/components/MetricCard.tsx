@@ -7,7 +7,7 @@ interface MetricCardProps {
 
 export function MetricCard({ name, value, rating, threshold }: MetricCardProps) {
   const ratingColor = rating === 'good' ? 'var(--accent-green)' : rating === 'needs-improvement' ? 'var(--accent-orange)' : 'var(--accent-red)';
-  const ratingLabel = rating === 'good' ? 'Good' : rating === 'needs-improvement' ? 'Needs Improvement' : 'Poor';
+  const ratingLabel = rating === 'good' ? '良好' : rating === 'needs-improvement' ? '待优化' : '较差';
 
   return (
     <div
@@ -31,8 +31,8 @@ export function MetricCard({ name, value, rating, threshold }: MetricCardProps) 
         {threshold.unit && <span className="text-sm ml-1" style={{ color: 'var(--text-muted)' }}>{threshold.unit}</span>}
       </div>
       <div className="flex gap-4 text-xs" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-        <span>Good: ≤{threshold.good}{threshold.unit}</span>
-        <span>Poor: ≥{threshold.poor}{threshold.unit}</span>
+        <span>良好: ≤{threshold.good}{threshold.unit}</span>
+        <span>较差: ≥{threshold.poor}{threshold.unit}</span>
       </div>
       <div className="mt-3 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--bg-tertiary)' }}>
         <div

@@ -11,7 +11,7 @@ describe('NotFound page', () => {
       </MemoryRouter>
     );
     expect(screen.getByText('404')).toBeInTheDocument();
-    expect(screen.getByText('Page Not Found')).toBeInTheDocument();
+    expect(screen.getByText('页面未找到')).toBeInTheDocument();
   });
 
   it('displays the current path', () => {
@@ -29,6 +29,6 @@ describe('NotFound page', () => {
         <NotFound />
       </MemoryRouter>
     );
-    expect(screen.getByText('Back to Overview')).toBeInTheDocument();
+    expect(screen.getByText('返回总览')).toBeInTheDocument();
   });
 });

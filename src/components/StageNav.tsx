@@ -66,7 +66,7 @@ export function StageNav({ onClose }: StageNavProps) {
           <div className="flex items-center gap-2">
             <span className="text-lg" style={{ color: 'var(--accent-green)' }}>⚡</span>
             <h1 className="text-sm font-bold tracking-wide" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
-              FED LIFECYCLE
+              FED 全流程
             </h1>
           </div>
           {/* Close button for mobile */}
@@ -75,7 +75,7 @@ export function StageNav({ onClose }: StageNavProps) {
               onClick={onClose}
               className="p-1 rounded cursor-pointer lg:hidden"
               style={{ color: 'var(--text-muted)' }}
-              aria-label="Close navigation"
+              aria-label="关闭导航"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -83,7 +83,7 @@ export function StageNav({ onClose }: StageNavProps) {
             </button>
           )}
         </div>
-        <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Senior FED Guide</p>
+        <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>资深前端指南</p>
       </div>
 
       {/* Stage List */}
@@ -135,7 +135,7 @@ export function StageNav({ onClose }: StageNavProps) {
       <div className="p-4 border-t text-xs" style={{ borderColor: 'var(--border-default)', color: 'var(--text-muted)' }}>
         <div className="flex items-center gap-1.5 mb-1">
           <span style={{ color: 'var(--accent-green)' }}>●</span>
-          <span style={{ fontFamily: 'var(--font-mono)' }}>Alt+↑↓ Navigate</span>
+          <span style={{ fontFamily: 'var(--font-mono)' }}>Alt+↑↓ 切换阶段</span>
         </div>
         <div style={{ fontFamily: 'var(--font-mono)' }}>v1.0.0 · React + Vite</div>
       </div>

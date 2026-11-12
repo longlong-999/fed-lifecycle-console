@@ -32,7 +32,7 @@ describe('StageNav', () => {
         <StageNav />
       </Wrapper>
     );
-    const activeButton = screen.getByText('Testing').closest('button');
+    const activeButton = screen.getByText('测试').closest('button');
     expect(activeButton).toHaveAttribute('aria-current', 'page');
   });
 
@@ -42,7 +42,7 @@ describe('StageNav', () => {
         <StageNav />
       </Wrapper>
     );
-    expect(screen.getByText('FED LIFECYCLE')).toBeInTheDocument();
+    expect(screen.getByText('FED 全流程')).toBeInTheDocument();
   });
 
   it('does not show checkmark when checklist is not 100% complete', () => {

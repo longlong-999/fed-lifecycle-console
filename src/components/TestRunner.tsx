@@ -53,7 +53,7 @@ export function TestRunner() {
     const lines = [
       '$ pnpm test',
       '',
-      '  FED Lifecycle Console',
+      '  FED 全流程控制台',
       '  Vitest 5.1.0 + React Testing Library',
       '  ------------------------------------------',
     ];
@@ -102,7 +102,7 @@ export function TestRunner() {
         <div className="flex items-center gap-3">
           {done && (
             <span className="text-xs" style={{ color: 'var(--accent-green)', fontFamily: 'var(--font-mono)' }}>
-              {passCount}/{totalTests} passed
+              {passCount}/{totalTests} 通过
             </span>
           )}
           <button
@@ -114,7 +114,7 @@ export function TestRunner() {
               color: running ? 'var(--text-muted)' : 'var(--bg-primary)',
             }}
           >
-            {running ? 'Running...' : done ? 'Replay' : 'Run Tests'}
+            {running ? '运行中...' : done ? '重放' : '运行测试'}
           </button>
         </div>
       </div>
@@ -137,15 +137,15 @@ export function TestRunner() {
           <>
             <div className="mt-3 pt-2 border-t" style={{ borderColor: 'var(--border-default)' }}>
               <div style={{ color: 'var(--accent-green)' }}>
-                Tests: {totalTests} passed, {totalTests} total
+                测试: {totalTests} 通过, 共 {totalTests} 个
               </div>
-              <div style={{ color: 'var(--text-muted)' }}>Time: 1.247s</div>
+              <div style={{ color: 'var(--text-muted)' }}>耗时: 1.247s</div>
             </div>
           </>
         )}
         {!running && results.length === 0 && !currentLine && (
           <div style={{ color: 'var(--text-muted)' }}>
-            Click "Run Tests" to simulate test execution...
+            点击「运行测试」模拟执行测试用例...
           </div>
         )}
       </div>

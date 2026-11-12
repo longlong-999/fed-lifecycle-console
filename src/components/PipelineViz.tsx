@@ -85,7 +85,7 @@ export function PipelineViz() {
             main
           </span>
           <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(88,166,255,0.15)', color: 'var(--accent-blue)', fontFamily: 'var(--font-mono)' }}>
-            Demo
+            演示
           </span>
         </div>
         <button
@@ -98,7 +98,7 @@ export function PipelineViz() {
             fontFamily: 'var(--font-mono)',
           }}
         >
-          {running ? 'Running...' : 'Replay'}
+          {running ? '运行中...' : '重放'}
         </button>
       </div>
 

@@ -20,7 +20,7 @@ jobs:
           version: 9
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
@@ -37,7 +37,7 @@ jobs:
           version: 9
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:coverage
@@ -57,7 +57,7 @@ jobs:
           version: 9
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
@@ -84,9 +84,9 @@ export function CICD() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold mb-2">CI/CD Pipeline</h2>
+        <h2 className="text-2xl font-bold mb-2">CI/CD 流水线</h2>
         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-          GitHub Actions automation — lint, test, build, and deploy on every push and pull request.
+          GitHub Actions 自动化 — 每次推送和 PR 自动执行 Lint、测试、构建与部署。
         </p>
       </div>
 
@@ -96,14 +96,14 @@ export function CICD() {
       {/* Pipeline Explanation */}
       <div className="rounded-lg border p-6" style={{ borderColor: 'var(--border-default)', background: 'var(--bg-card)' }}>
         <div className="text-xs mb-4 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          PIPELINE STAGES
+          流水线阶段
         </div>
         <div className="space-y-3">
           {[
-            { stage: 'lint', desc: 'ESLint + TypeScript type checking. Catches code quality issues and type errors before tests run.', time: '~20s' },
-            { stage: 'test', desc: 'Vitest unit and integration tests with coverage reporting. Requires lint to pass first.', time: '~45s' },
-            { stage: 'build', desc: 'Production build with Vite. Generates optimized assets with content hashes for caching.', time: '~30s' },
-            { stage: 'deploy', desc: 'Only runs on main branch. Downloads build artifact and deploys to production environment.', time: '~15s' },
+            { stage: 'lint', desc: 'ESLint + TypeScript 类型检查，在测试前捕获代码质量和类型错误。', time: '~20s' },
+            { stage: 'test', desc: 'Vitest 单元与集成测试，含覆盖率报告。需 lint 先通过。', time: '~45s' },
+            { stage: 'build', desc: 'Vite 生产构建，生成带内容哈希的优化资源用于缓存。', time: '~30s' },
+            { stage: 'deploy', desc: '仅 main 分支执行，下载构建产物并部署到生产环境。', time: '~15s' },
           ].map((item) => (
             <div key={item.stage} className="flex items-start gap-4 p-3 rounded" style={{ background: 'var(--bg-primary)' }}>
               <span className="text-xs font-bold px-2 py-1 rounded self-start" style={{ background: 'var(--bg-tertiary)', color: 'var(--accent-blue)', fontFamily: 'var(--font-mono)' }}>

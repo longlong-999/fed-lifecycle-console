@@ -40,10 +40,10 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="flex items-center justify-center min-h-screen" style={{ background: 'var(--bg-primary)' }}>
           <div className="text-center p-8 rounded-lg border" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--accent-red)' }}>
             <div className="text-2xl mb-4" style={{ color: 'var(--accent-red)' }}>
-              Runtime Error Caught
+              捕获到运行时错误
             </div>
             <p className="mb-4" style={{ color: 'var(--text-secondary)' }}>
-              The ErrorBoundary caught an unexpected error. Check the console for details.
+              ErrorBoundary 捕获了一个未预期的错误，请查看控制台了解详情。
             </p>
             <pre
               className="text-left p-4 rounded text-xs overflow-auto max-w-lg"
@@ -56,7 +56,7 @@ export class ErrorBoundary extends Component<Props, State> {
               className="mt-4 px-4 py-2 rounded text-sm font-medium transition-colors cursor-pointer"
               style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-default)' }}
             >
-              Retry
+              重试
             </button>
           </div>
         </div>

@@ -18,7 +18,7 @@ describe('MetricCard', () => {
 
   it('shows correct rating badge for good', () => {
     render(<MetricCard {...defaultProps} />);
-    expect(screen.getByText('Good')).toBeInTheDocument();
+    expect(screen.getByText('良好')).toBeInTheDocument();
   });
 
   it('shows needs-improvement badge', () => {
@@ -30,12 +30,12 @@ describe('MetricCard', () => {
         threshold={{ good: 0.1, poor: 0.25, unit: '' }}
       />
     );
-    expect(screen.getByText('Needs Improvement')).toBeInTheDocument();
+    expect(screen.getByText('待优化')).toBeInTheDocument();
   });
 
   it('renders threshold values', () => {
     render(<MetricCard {...defaultProps} />);
-    expect(screen.getByText(/Good: ≤2500ms/)).toBeInTheDocument();
-    expect(screen.getByText(/Poor: ≥4000ms/)).toBeInTheDocument();
+    expect(screen.getByText(/良好: ≤2500ms/)).toBeInTheDocument();
+    expect(screen.getByText(/较差: ≥4000ms/)).toBeInTheDocument();
   });
 });

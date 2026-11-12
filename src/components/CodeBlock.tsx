@@ -52,7 +52,7 @@ export function CodeBlock({ code, language = 'typescript', filename }: CodeBlock
     }
   }, [code]);
 
-  const copyLabel = copyState === 'success' ? '✓ Copied' : copyState === 'fail' ? 'Copy Failed' : 'Copy';
+  const copyLabel = copyState === 'success' ? '✓ 已复制' : copyState === 'fail' ? '复制失败' : '复制';
   const copyBg = copyState === 'success' ? 'var(--accent-green)' : copyState === 'fail' ? 'var(--accent-red)' : 'var(--bg-secondary)';
   const copyColor = copyState === 'idle' ? 'var(--text-secondary)' : 'var(--bg-primary)';
 

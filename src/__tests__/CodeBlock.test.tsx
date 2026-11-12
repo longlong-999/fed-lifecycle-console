@@ -16,7 +16,7 @@ describe('CodeBlock', () => {
 
   it('shows copy button', () => {
     render(<CodeBlock code="hello world" />);
-    expect(screen.getByText('Copy')).toBeInTheDocument();
+    expect(screen.getByText('复制')).toBeInTheDocument();
   });
 
   it('copies code on button click', async () => {
@@ -25,7 +25,7 @@ describe('CodeBlock', () => {
     Object.assign(navigator.clipboard, { writeText: writeTextMock });
 
     render(<CodeBlock code="copy me" />);
-    await user.click(screen.getByText('Copy'));
+    await user.click(screen.getByText('复制'));
     expect(writeTextMock).toHaveBeenCalledWith('copy me');
   });
 });

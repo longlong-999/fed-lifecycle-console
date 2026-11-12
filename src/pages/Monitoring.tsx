@@ -48,13 +48,13 @@ let reportFn: ReportCallback = (metric) => {
     timestamp: Date.now(),
   };
 
-  // Send to analytics endpoint
+  // 发送到分析端点
   if (navigator.sendBeacon) {
     navigator.sendBeacon('/api/vitals', JSON.stringify(body));
   }
 };
 
-// Allow replacing the report function (for testing)
+// 允许替换上报函数（用于测试）
 export function setReportFunction(fn: ReportCallback): void {
   reportFn = fn;
 }
@@ -83,7 +83,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Report to error tracking service (Sentry, etc.)
+    // 上报到错误追踪服务（Sentry 等）
     console.error('[ErrorBoundary]', error, errorInfo);
     reportError({ error, componentStack: errorInfo.componentStack });
   }
@@ -116,9 +116,9 @@ export function Monitoring() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold mb-2">Online Monitoring</h2>
+        <h2 className="text-2xl font-bold mb-2">线上监控</h2>
         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-          Web Vitals real-time metrics, error boundary strategy, and alerting thresholds.
+          Web Vitals 实时指标、错误边界策略与告警阈值。
         </p>
       </div>
 
@@ -126,18 +126,18 @@ export function Monitoring() {
       <div className="rounded-lg border p-6" style={{ borderColor: 'var(--border-default)', background: 'var(--bg-card)' }}>
         <div className="flex items-center justify-between mb-4">
           <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            WEB VITALS — LIVE METRICS
+            WEB VITALS — 实时指标
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(210,153,34,0.15)', color: 'var(--accent-orange)', fontFamily: 'var(--font-mono)' }}>
-              Simulated Data
+              模拟数据
             </span>
             <span className="text-xs" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-              Last update: {lastUpdate.toLocaleTimeString()}
+              最近更新: {lastUpdate.toLocaleTimeString()}
             </span>
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--accent-green)' }} />
-              <span className="text-xs" style={{ color: 'var(--accent-green)' }}>Live</span>
+              <span className="text-xs" style={{ color: 'var(--accent-green)' }}>实时</span>
             </span>
           </div>
         </div>
@@ -157,25 +157,25 @@ export function Monitoring() {
       {/* Alert Thresholds */}
       <div className="rounded-lg border p-6" style={{ borderColor: 'var(--border-default)', background: 'var(--bg-card)' }}>
         <div className="text-xs mb-4 font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          ALERT THRESHOLDS
+          告警阈值
         </div>
         <table className="w-full text-xs" style={{ fontFamily: 'var(--font-mono)' }}>
           <thead>
             <tr className="border-b" style={{ borderColor: 'var(--border-default)' }}>
-              <th className="text-left py-2 px-3" style={{ color: 'var(--text-muted)' }}>Metric</th>
-              <th className="text-left py-2 px-3" style={{ color: 'var(--accent-green)' }}>Good</th>
-              <th className="text-left py-2 px-3" style={{ color: 'var(--accent-orange)' }}>Needs Improvement</th>
-              <th className="text-left py-2 px-3" style={{ color: 'var(--accent-red)' }}>Poor</th>
-              <th className="text-left py-2 px-3" style={{ color: 'var(--text-muted)' }}>Alert Action</th>
+              <th className="text-left py-2 px-3" style={{ color: 'var(--text-muted)' }}>指标</th>
+              <th className="text-left py-2 px-3" style={{ color: 'var(--accent-green)' }}>良好</th>
+              <th className="text-left py-2 px-3" style={{ color: 'var(--accent-orange)' }}>待优化</th>
+              <th className="text-left py-2 px-3" style={{ color: 'var(--accent-red)' }}>较差</th>
+              <th className="text-left py-2 px-3" style={{ color: 'var(--text-muted)' }}>告警动作</th>
             </tr>
           </thead>
           <tbody>
             {[
-              { name: 'FCP', good: '≤ 1.8s', ni: '1.8s - 3.0s', poor: '> 3.0s', action: 'PageSpeed audit' },
-              { name: 'LCP', good: '≤ 2.5s', ni: '2.5s - 4.0s', poor: '> 4.0s', action: 'Optimize images/fonts' },
-              { name: 'CLS', good: '≤ 0.1', ni: '0.1 - 0.25', poor: '> 0.25', action: 'Reserve layout space' },
-              { name: 'INP', good: '≤ 200ms', ni: '200ms - 500ms', poor: '> 500ms', action: 'Debounce handlers' },
-              { name: 'TTFB', good: '≤ 800ms', ni: '800ms - 1.8s', poor: '> 1.8s', action: 'CDN / cache review' },
+              { name: 'FCP', good: '≤ 1.8s', ni: '1.8s - 3.0s', poor: '> 3.0s', action: 'PageSpeed 审计' },
+              { name: 'LCP', good: '≤ 2.5s', ni: '2.5s - 4.0s', poor: '> 4.0s', action: '优化图片/字体' },
+              { name: 'CLS', good: '≤ 0.1', ni: '0.1 - 0.25', poor: '> 0.25', action: '预留布局空间' },
+              { name: 'INP', good: '≤ 200ms', ni: '200ms - 500ms', poor: '> 500ms', action: '防抖处理函数' },
+              { name: 'TTFB', good: '≤ 800ms', ni: '800ms - 1.8s', poor: '> 1.8s', action: 'CDN / 缓存审查' },
             ].map((row) => (
               <tr key={row.name} className="border-b" style={{ borderColor: 'var(--border-default)' }}>
                 <td className="py-2 px-3 font-bold" style={{ color: 'var(--text-primary)' }}>{row.name}</td>
@@ -192,7 +192,7 @@ export function Monitoring() {
       {/* Code */}
       <div className="space-y-4">
         <div className="text-xs font-bold tracking-wider" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          IMPLEMENTATION
+          实现代码
         </div>
         <CodeBlock code={monitorCode} language="typescript" filename="src/lib/monitor.ts" />
         <CodeBlock code={errorBoundaryCode} language="typescript" filename="src/components/ErrorBoundary.tsx" />

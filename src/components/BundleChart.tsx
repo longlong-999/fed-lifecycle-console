@@ -23,11 +23,11 @@ export function BundleChart({ before, after }: BundleChartProps) {
       <div className="flex items-center gap-6 text-sm" style={{ fontFamily: 'var(--font-mono)' }}>
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded" style={{ background: 'var(--accent-red)', opacity: 0.6 }} />
-          <span style={{ color: 'var(--text-secondary)' }}>Before: {(totalBefore / 1024).toFixed(1)} KB</span>
+          <span style={{ color: 'var(--text-secondary)' }}>优化前: {(totalBefore / 1024).toFixed(1)} KB</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded" style={{ background: 'var(--accent-green)' }} />
-          <span style={{ color: 'var(--text-secondary)' }}>After: {(totalAfter / 1024).toFixed(1)} KB</span>
+          <span style={{ color: 'var(--text-secondary)' }}>优化后: {(totalAfter / 1024).toFixed(1)} KB</span>
         </div>
         <div
           className="px-3 py-1 rounded-full text-xs font-bold"
@@ -40,7 +40,7 @@ export function BundleChart({ before, after }: BundleChartProps) {
       <div className="grid grid-cols-2 gap-8">
         <div>
           <div className="text-xs mb-3 font-medium" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            BEFORE OPTIMIZATION
+            优化前
           </div>
           <div className="space-y-2">
             {before.map((item) => (
@@ -67,7 +67,7 @@ export function BundleChart({ before, after }: BundleChartProps) {
 
         <div>
           <div className="text-xs mb-3 font-medium" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            AFTER OPTIMIZATION
+            优化后
           </div>
           <div className="space-y-2">
             {after.map((item) => (

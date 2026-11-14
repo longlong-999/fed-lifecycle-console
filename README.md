@@ -1,147 +1,147 @@
-# FED Lifecycle Console
+# FED 全流程控制台
 
-A comprehensive, interactive web application that demonstrates the complete frontend development lifecycle — from requirements gathering to retrospective. Built as both a functional React application and a living textbook for senior frontend engineers.
+一个全面的交互式 Web 应用，完整展示前端研发全生命周期——从需求收集到复盘沉淀。它既是一个可运行的 React 应用，也是一份面向资深前端工程师的「活的」全流程教科书。
 
-## Tech Stack
+## 技术栈
 
-- **React 18** + **TypeScript** (strict mode)
-- **Vite 7** — instant dev server, optimized builds
-- **Tailwind CSS** — utility-first styling
-- **React Router v7** — client-side routing
-- **Vitest** + **React Testing Library** — testing framework
-- **web-vitals** — performance monitoring
-- **Docker** + **nginx** — production deployment
+- **React 18** + **TypeScript**（strict 模式）
+- **Vite 7** — 即时启动开发服务器，优化构建
+- **Tailwind CSS** — 原子化样式方案
+- **React Router v7** — 客户端路由
+- **Vitest** + **React Testing Library** — 测试框架
+- **web-vitals** — 性能监控
+- **Docker** + **nginx** — 生产部署
 
-## Quick Start
+## 快速开始
 
 ```bash
-# Install dependencies
+# 安装依赖
 pnpm install
 
-# Start development server
+# 启动开发服务器
 pnpm dev
 
-# Run tests
+# 运行测试
 pnpm test
 
-# Build for production
+# 生产构建
 pnpm build
 ```
 
-## Available Scripts
+## 可用脚本
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start Vite dev server with HMR |
-| `pnpm build` | TypeScript check + production build |
-| `pnpm preview` | Preview production build locally |
-| `pnpm test` | Run all tests with Vitest |
-| `pnpm test:watch` | Run tests in watch mode |
-| `pnpm test:coverage` | Generate test coverage report |
-| `pnpm lint` | Run ESLint on source files |
-| `pnpm ts-check` | TypeScript type checking |
+| 命令 | 说明 |
+|------|------|
+| `pnpm dev` | 启动 Vite 开发服务器（支持 HMR） |
+| `pnpm build` | TypeScript 类型检查 + 生产构建 |
+| `pnpm preview` | 本地预览生产构建产物 |
+| `pnpm test` | 使用 Vitest 运行全部测试 |
+| `pnpm test:watch` | 监听模式运行测试 |
+| `pnpm test:coverage` | 生成测试覆盖率报告 |
+| `pnpm lint` | 对源文件运行 ESLint |
+| `pnpm ts-check` | TypeScript 类型检查 |
 
-## The 9 Stages of Frontend Lifecycle
+## 前端全生命周期 9 个阶段
 
-### 1. Pipeline Overview (`/overview`)
-Visual pipeline showing all stages with navigation. Key metrics at a glance.
+### 1. Pipeline 总览（`/overview`）
+可视化流水线展示所有阶段及导航，关键指标一目了然。
 
-### 2. Requirements & Technical Design (`/requirements`)
-- Interactive requirement checklist with acceptance criteria
-- Technology comparison cards (Vite vs Webpack, Vitest vs Jest)
-- Architecture Decision Records (ADR)
+### 2. 需求与技术方案（`/requirements`）
+- 可交互的需求清单与验收标准
+- 技术选型对比卡（Vite vs Webpack、Vitest vs Jest）
+- 架构决策记录（ADR）
 
-### 3. Engineering Standards (`/engineering`)
-- Project structure tree with naming conventions
-- Real ESLint, Prettier, and tsconfig configurations
-- Code style enforcement rules
+### 3. 工程规范（`/engineering`）
+- 项目结构树与命名约定
+- 真实的 ESLint、Prettier、tsconfig 配置
+- 代码风格强制规则
 
-### 4. Testing (`/testing`)
-- Vitest + React Testing Library test code
-- Interactive test runner with terminal animation
-- Coverage reporting and test strategy
+### 4. 测试（`/testing`）
+- Vitest + React Testing Library 测试代码
+- 带终端动画的交互式测试运行器
+- 覆盖率报告与测试策略
 
-### 5. Build & Optimization (`/build`)
-- Bundle analysis with SVG treemap visualization
-- Code splitting and tree-shaking strategies
-- Before/after optimization comparison
+### 5. 构建与优化（`/build`）
+- SVG Treemap 可视化 Bundle 分析
+- 代码分割与 Tree-shaking 策略
+- 优化前后对比
 
-### 6. CI/CD (`/cicd`)
-- GitHub Actions pipeline visualization
-- Real `ci.yml` workflow configuration
-- Job status animation (lint → test → build → deploy)
+### 6. CI/CD（`/cicd`）
+- GitHub Actions 流水线可视化
+- 真实的 `ci.yml` 工作流配置
+- Job 状态流转动画（lint → test → build → deploy）
 
-### 7. Deployment (`/deploy`)
-- Docker multi-stage build Dockerfile
-- nginx.conf with gzip, caching, SPA fallback
-- Deployment flow diagram
+### 7. 部署（`/deploy`）
+- Docker 多阶段构建 Dockerfile
+- nginx.conf 配置（gzip、缓存策略、SPA 回退）
+- 部署流程图
 
-### 8. Monitoring (`/monitoring`)
-- Live Web Vitals dashboard (FCP, LCP, CLS, INP, TTFB)
-- Alert threshold configuration
-- Error boundary and reporting implementation
+### 8. 线上监控（`/monitoring`）
+- 实时 Web Vitals 仪表盘（FCP、LCP、CLS、INP、TTFB）
+- 告警阈值配置
+- Error Boundary 与上报实现
 
-### 9. Retrospective (`/retrospective`)
-- Best practices checklist by category
-- Adoption progress tracking
-- Key takeaways for senior engineers
+### 9. 复盘沉淀（`/retrospective`）
+- 按分类的最佳实践清单
+- 采纳进度追踪
+- 资深工程师关键经验总结
 
-## Project Structure
+## 项目结构
 
 ```
 src/
-├── __tests__/          # Component tests
-├── components/         # Reusable UI components
-├── pages/              # Route-level pages (9 stages)
-├── lib/                # Utilities (monitoring, stage definitions)
-├── test/setup.ts       # Vitest setup
-├── App.tsx             # Root component with routes
-├── main.tsx            # Entry point
-└── index.css           # Global styles with CSS variables
+├── __tests__/          # 组件测试
+├── components/         # 可复用 UI 组件
+├── pages/              # 路由级页面（9 个阶段）
+├── lib/                # 工具库（监控、阶段定义）
+├── test/setup.ts       # Vitest 配置
+├── App.tsx             # 根组件与路由
+├── main.tsx            # 入口文件
+└── index.css           # 全局样式与 CSS 变量
 ```
 
-## Testing
+## 测试
 
-This project includes real component tests:
+本项目包含真实的组件测试：
 
 ```bash
-# Run all tests
+# 运行全部测试
 pnpm test
 
-# Watch mode
+# 监听模式
 pnpm test:watch
 
-# With coverage
+# 带覆盖率
 pnpm test:coverage
 ```
 
-Test files:
-- `src/__tests__/StageNav.test.tsx` — Navigation component tests
-- `src/__tests__/MetricCard.test.tsx` — Metric display tests
-- `src/__tests__/CodeBlock.test.tsx` — Code block component tests
+测试文件：
+- `src/__tests__/StageNav.test.tsx` — 导航组件测试
+- `src/__tests__/MetricCard.test.tsx` — 指标卡片测试
+- `src/__tests__/CodeBlock.test.tsx` — 代码块组件测试
 
-## CI/CD Pipeline
+## CI/CD 流水线
 
-GitHub Actions workflow (`.github/workflows/ci.yml`):
+GitHub Actions 工作流（`.github/workflows/ci.yml`）：
 
-1. **lint** — ESLint + TypeScript type checking
-2. **test** — Vitest with coverage reporting
-3. **build** — Production build with Vite
-4. **deploy** — Deploy to production (main branch only)
+1. **lint** — ESLint + TypeScript 类型检查
+2. **test** — Vitest 测试 + 覆盖率报告
+3. **build** — Vite 生产构建
+4. **deploy** — 部署到生产环境（仅 main 分支）
 
-## Docker Deployment
+## Docker 部署
 
 ```bash
-# Build Docker image
+# 构建 Docker 镜像
 docker build -t fed-lifecycle .
 
-# Run container
+# 运行容器
 docker run -p 80:80 fed-lifecycle
 ```
 
-The Dockerfile uses multi-stage builds:
-- **Stage 1**: Node.js builder — installs deps and builds
-- **Stage 2**: nginx — serves static assets with optimized config
+Dockerfile 采用多阶段构建：
+- **Stage 1**：Node.js 构建器 — 安装依赖并构建
+- **Stage 2**：nginx — 以优化配置提供静态资源服务
 
 ## GitHub Pages 部署
 
@@ -169,22 +169,22 @@ push to main → install → build (--base=/<repo>/) → SPA fallback (404.html)
 https://<owner>.github.io/<repo>/
 ```
 
-## Performance Monitoring
+## 性能监控
 
-Web Vitals are tracked using the `web-vitals` library:
-- FCP (First Contentful Paint)
-- LCP (Largest Contentful Paint)
-- CLS (Cumulative Layout Shift)
-- INP (Interaction to Next Paint)
-- TTFB (Time to First Byte)
+使用 `web-vitals` 库追踪 Web Vitals 指标：
+- FCP（First Contentful Paint）
+- LCP（Largest Contentful Paint）
+- CLS（Cumulative Layout Shift）
+- INP（Interaction to Next Paint）
+- TTFB（Time to First Byte）
 
-Implementation: `src/lib/monitor.ts`
+实现文件：`src/lib/monitor.ts`
 
-## Keyboard Navigation
+## 键盘导航
 
-- `Alt + ↑` — Navigate to previous stage
-- `Alt + ↓` — Navigate to next stage
+- `Alt + ↑` — 切换到上一阶段
+- `Alt + ↓` — 切换到下一阶段
 
-## License
+## 许可证
 
 MIT

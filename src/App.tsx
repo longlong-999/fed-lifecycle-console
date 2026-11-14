@@ -34,7 +34,7 @@ export function App() {
   return (
     <ChecklistProvider>
       <ErrorBoundary>
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
           <Layout>
             <Suspense fallback={<LoadingFallback />}>
               <Routes>
